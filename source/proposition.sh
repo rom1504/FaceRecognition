@@ -1,0 +1,1 @@
+perl proposition.pl ../sortie/prediction.svm ../intermediaire/corpusTest/liste.txt ../modele/entrainement.feat ../sortie/corpusProposition ../intermediaire/corpusTest

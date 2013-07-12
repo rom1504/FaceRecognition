@@ -1,0 +1,1 @@
+perl separer.pl ../entree/classes3/ ../intermediaire/corpusEntrainement/ ../intermediaire/corpusTest/ ../intermediaire/corpusCrossValidation/

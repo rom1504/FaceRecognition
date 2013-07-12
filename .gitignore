@@ -1,0 +1,8 @@
+entree/
+sortie/
+intermediaire/
+texte/
+bin/
+modele/
+source/*~
+source/kmeans*
