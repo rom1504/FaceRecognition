@@ -6,3 +6,5 @@ bin/
 modele/
 source/*~
 source/kmeans*
+donnees/
+old.tgz
