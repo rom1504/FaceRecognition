@@ -29,7 +29,7 @@ foreach my $fichier (@fichiers)
 		$ligne =~ s/\s+$//;
 		my ($x,$y,$w,$h,$fichierDecoupe,$personne,$valide,$ignore)=split("\t",$ligne);
 		if($x ne "" && $y ne "" && $w ne "" && $h ne "" && $fichierDecoupe ne ""
-		&& ($personne eq "" && $valide eq "" && $ignore eq ""))
+		&& $personne eq "")
 		{
 			my $lignePrediction=<$fprediction>;
 			$lignePrediction=~ s/\s+$//;		
