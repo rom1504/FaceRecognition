@@ -27,7 +27,7 @@ foreach my $dossier (@dossiers)
 	my @fichiers=glob("$dossier/*");
 	foreach my $fichier (@fichiers)
 	{
-		open(my $r,"../bin/tosvm $fichier |");
+		open(my $r,"../bin/tosvm $fichier |"); # pc ici : configurer l'emplacement de ce truc
 		print($fsvm $features{$d}." ".(<$r>));
 		close($r);
 	}
