@@ -38,7 +38,7 @@ foreach my $fichier (@fichiers)
 				$features{$personne}=$max;
 			}
 			open(my $r,dirname($0)."/../bin/tosvm $fichierDecoupe |");
-			my $feature=$type eq "entrainement"  ? $features{$personne} : " ";
+			my $feature=$type eq "entrainement"  ? $features{$personne} : "0";
 			print($fsvm $feature." ".(<$r>));
 			close($r);
 		}
