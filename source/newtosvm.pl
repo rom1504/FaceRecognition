@@ -30,7 +30,7 @@ foreach my $fichier (@fichiers)
 		$ligne =~ s/\s+$//;
 		my ($x,$y,$w,$h,$fichierDecoupe,$personne,$valide,$ignore)=split("\t",$ligne);
 		if($x ne "" && $y ne "" && $w ne "" && $h ne "" && $fichierDecoupe ne ""
-		&& (($type eq "entrainement" && $personne ne "" && $valide eq "1" && $ignore eq "0") || ($type eq "test" && $personne eq "")))
+		&& (($type eq "entrainement" && $personne ne "" && $valide eq "1" && $ignore eq "0") || ($type eq "test" && $personne eq "" && $ignore ne "1")))
 		{
 			if($type eq "entrainement" && !(exists $features{$personne}))
 			{
@@ -38,7 +38,7 @@ foreach my $fichier (@fichiers)
 				$features{$personne}=$max;
 			}
 			open(my $r,dirname($0)."/../bin/tosvm $fichierDecoupe |");
-			my $feature=$type eq "entrainement"  ? $features{$personne} : "0";
+			my $feature=$type eq "entrainement"  ? $features{$personne} : "0";# no idea whether I should put 0 or nothing or...
 			print($fsvm $feature." ".(<$r>));
 			close($r);
 		}
