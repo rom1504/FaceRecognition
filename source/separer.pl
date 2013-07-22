@@ -1,74 +1,114 @@
-#use File::Find;
 use File::Basename;
 use File::Copy;
 use File::Remove 'remove';
 use strict;
 if((scalar @ARGV)!=4)
 {
-	print("usage: $0 <source> <entrainement> <test> <crossValidation>\n");
+	print("usage: $0 <informationsInitial> <informationsSansTests> <fichierTest> <fichierCrossValidation>\n");
 	exit 1;
 }
-my ($source,$entrainement,$test,$crossValidation)=@ARGV;
-#find (sub { push (@fichiers,$File::Find::name) if(!-d); }, $source); : sympa mais pas ce que je veux
-my @dossiers=grep {-d $_} (glob("$source/*"));
-sub round
+my ($informationsInitial,$informationsSansTests,$fichierTest,$fichierCrossValidation)=@ARGV;
+
+
+
+
+# ce que ça doit faire : lire chaque fichier d'info d'un dossier info initial
+# si identification non ignoré : 
+
+# dans l'idée : récupérer identification reconnu et validé non ignoré, les partager aléatoirement en 3 ensembles de taille 70% 15% 15%
+# puis réenregistrer le tout
+
+# réalisation :
+# en c++ avec mon modèle déjà implémenté ce serait assez trivial, pas nécessairement...
+# réfléchir, ça doit pouvoir se faire en qq lignes
+
+# j'ai besoin de stocker les identifications bonnes et de savoir où les enregistrer (avec les autres)
+
+# idée simple : tout mettre dans un hash de list (équivalent de PersonneMap)
+# et faire un tableau avec les bonnes identification avec un moyen simple de vérifier qu'elles sont dans ce tableau ou pas
+# une fois que c'est fait partager le tableau en 3
+# une fois le tableau partagé en 3 enregistrer tout 3 fois en changeant de tableau-filtrant à chaque fois
+
+# moyen simple (bien qu'un peu stupide) de filtrer : dans ce tableau stocker l'emplacement de la photoDecoupee, c'est un identifiant unique
+# si on veut que la photoDecoupee soit facultative un jour, une possibilité simple sera de regénérer le nom, mais ce n'est pas d'actualité
+
+# bien plus qu'à le faire
+
+# plan simple :
+# 1) stocker tout dans un hash
+# 2) générer 2 tableau pour test et cross validation
+# 3) enregistrer le tout où il faut
+
+#  début de truc à compléter, modifier
+
+my %identifications;
+
+my $count=0;
+my @fichiers=glob("$informationsInitial/*");
+foreach my $fichier (@fichiers)
 {
-	return int(@_[0]+0.5);
+	$identifications{$fichier}=[];
+	open(my $ffichier,"<",$fichier);
+	my $ligne;
+	while($ligne=<$ffichier>)
+	{
+		$ligne =~ s/\s+$//;
+		my ($x,$y,$w,$h,$fichierDecoupe,$personne,$valide,$ignore)=split("\t",$ligne);
+		if($x ne "" && $y ne "" && $w ne "" && $h ne "" && $fichierDecoupe ne "" && $personne ne "" && $valide eq "1" && $ignore eq "0") {$count++;}
+		push(@{$identifications{$fichier}},$ligne);
+	}
+	close($ffichier);
 }
 
-foreach ($entrainement,$test,$crossValidation)
+# print(@{$identifications{"donnees/informations//p_large_f1sd_542400084a195c72.jpg.txt"}});
+
+# print($count."\n");# 151
+
+my $nbSet=int($count*15/100);
+my %testSet;
+while((scalar(keys %testSet)) != $nbSet) {$testSet{int(rand($count))}=1;}
+
+my $nbCrossValidation=int($count*15/100);
+my %crossValidationSet;
+while((scalar(keys %crossValidationSet)) != $nbCrossValidation) {my $r=int(rand($count)); if(!(exists $testSet{$r})) {$crossValidationSet{$r}=1;}}
+
+# print(join ' ',(keys %crossValidationSet));
+
+
+open(my $ffichierTest,">",$fichierTest);
+open(my $ffichierCrossValidation,">",$fichierCrossValidation);
+my $i=0;
+foreach my $fichier (keys %identifications)
 {
-	if(!(-d "$_")) { mkdir "$_"; }
-	else { remove(\1,"$_/*"); }
-}
-open(my $flentrainement,">","$entrainement/liste.txt");
-open(my $fltest,">","$test/liste.txt");
-open(my $flcrossValidation,">","$crossValidation/liste.txt"); # ou faire plutôt dans tosvm et dans ce cas mettre les numéros des classes plutôt que les noms ? ne change pas des masses de choses (en considérant que glob affiche toujours les fichiers dans le même ordre) : bien comme ça
-foreach my $dossier (@dossiers)
-{
-	my $d=basename($dossier);
-	my @fichiers=glob("$dossier/*");
-	my $nombreTest=round((scalar @fichiers)*20/100);
-	my $i=0;
-	foreach ($entrainement,$test,$crossValidation) { if(!(-d "$_/$d")) { mkdir "$_/$d"; } }
-	foreach my $fichier (@fichiers)
+	open(my $ffichier,">",$informationsSansTests."/".(basename $fichier));
+	foreach my $identification (@{$identifications{$fichier}})
 	{
-		$i++;
-		my $f=basename($fichier);
-		my $choix=int(rand(5));
-# 		if($i<=$nombreTest) # généraliser (tableau de hash,...) pour racourcir ?
-# 		{
-# 			copy $fichier,"$test/$d/$f";
-# 			print($fltest "$d\t$f\n");
-# 		}
-# 		elsif($i<=$nombreTest*2)
-# 		{
-# 			copy $fichier,"$crossValidation/$d/$f";
-# 			print($flcrossValidation "$d\t$f\n");
-# 		}
-# 		else
-# 		{
-# 			copy $fichier,"$entrainement/$d/$f";
-# 			print($flentrainement "$d\t$f\n");
-# 		}
-		# pas très bien ( à peu près le bon nombre, c'est tout... )
-		if($choix==0)
+		my ($x,$y,$w,$h,$fichierDecoupe,$personne,$valide,$ignore)=split("\t",$identification);
+		if($x ne "" && $y ne "" && $w ne "" && $h ne "" && $fichierDecoupe ne "" && $personne ne "" && $valide eq "1" && $ignore eq "0")
 		{
-			copy $fichier,"$test/$d/$f";
-			print($fltest "$d\t$f\n");
+			if(exists $testSet{$i})
+			{
+				$identification=$x."\t".$y."\t".$w."\t".$h."\t".$fichierDecoupe."\t".""."\t".""."\t"."";
+				print($ffichierTest ($fichierDecoupe."\n"));
+			}
+			
+			if(exists $crossValidationSet{$i})
+			{
+				$identification=$x."\t".$y."\t".$w."\t".$h."\t".$fichierDecoupe."\t".""."\t".""."\t"."";
+				print($ffichierCrossValidation ($fichierDecoupe."\n"));
+			}
+			$i++;
 		}
-		elsif($choix==1)
-		{
-			copy $fichier,"$crossValidation/$d/$f";
-			print($flcrossValidation "$d\t$f\n");
-		}
-		else
-		{
-			copy $fichier,"$entrainement/$d/$f";
-			print($flentrainement "$d\t$f\n");
-		}
+		print($ffichier $identification."\n");
 	}
+	close($ffichier);
 }
-close($flentrainement);
-close($fltest);
-close($flcrossValidation);
+close($ffichierTest);
+close($ffichierCrossValidation);
+
+# perl source/newseparer.pl donnees/informations/ intermediaire/informationsSansTests/ intermediaire/fichierTest.txt intermediaire/fichierCrossValidation.txt
+
+
+# reste plus qu'à générer 2 fichier contenant les nom des photos découpées choisis et enlever ces photos decoupees du nouveau dossier 
+
+# j'aimerais faire un tag quand j'aurais fait marcher à peu près tout ce que je veux et que ça marche correctement (déjà ça va beaucoup plus vite de faire les reconnaissance via le logiciel qu'à la main)

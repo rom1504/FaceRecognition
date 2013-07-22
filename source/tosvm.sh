@@ -1,3 +1,13 @@
-perl tosvm.pl ../intermediaire/corpusEntrainement ../modele/entrainement.feat ../intermediaire/entrainement.svm entrainement
-perl tosvm.pl ../intermediaire/corpusTest ../modele/entrainement.feat ../intermediaire/test.svm test
-perl tosvm.pl ../intermediaire/corpusCrossValidation ../modele/entrainement.feat ../intermediaire/crossValidation.svm test
+if [[ $# -ne 4 ]]
+then
+		echo "usage : $0 <dossierInformations> <dossierPhotosDecoupees> <dossierModele> <dossierIntermediaire>" 
+		exit 1
+fi
+dir=`dirname $0`
+dossierInformations=$1
+dossierPhotosDecoupees=$2
+dossierModele=$3
+dossierIntermediaire=$4
+
+perl $dir/tosvm.pl $dossierInformations $dossierPhotosDecoupees $dossierModele/entrainement.feat $dossierIntermediaire/entrainement.svm entrainement
+perl $dir/tosvm.pl $dossierInformations $dossierPhotosDecoupees $dossierModele/entrainement.feat $dossierIntermediaire/test.svm test

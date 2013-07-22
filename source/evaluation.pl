@@ -1,38 +1,64 @@
 use List::Util "sum";
+use File::Basename;
 use strict;
+
+# ce que je vais faire : 
+# 1) lire fichierTest.txt et fichierCrossValidation.txt pour générer les sets correspondants
+# 2) lire en parallèle informations et informationsSansTests et entrer les informations en fonction des tests
+# 3) calculer
+# non ce fichier n'évalue qu'un seul ensemble qu'on passe en paramètre
+
 
 if((scalar @ARGV)!=3)
 {
-	print("usage: $0 <prediction> <liste> <features>");
+	print("usage: $0 <dossierInformations> <dossierInformationsSansTests> <fichierEnsembleAEvaluer>");
 }
-my ($prediction,$liste,$features)=@ARGV;
+my ($dossierInformations,$dossierInformationsSansTests,$fichierEnsembleAEvaluer)=@ARGV;
 
-open(my $ffeatures,"<",$features);
-my %mfeatures=map {$_ =~ s/\s+$//; my @a=split("\t",$_);$a[1]=>$a[0]} (<$ffeatures>);
-close($ffeatures);
+open(my $ffichierEnsembleAEvaluer,"<",$fichierEnsembleAEvaluer);
+my %ensembleAEvaluer=map { my $ligne=$_ ; $ligne =~ s/\s+$//; $ligne => 1 } <$ffichierEnsembleAEvaluer>;
+close($ffichierEnsembleAEvaluer);
 
-open(my $fliste,"<",$liste);
-open(my $fprediction,"<",$prediction);
 
-my ($ligneListe,$lignePrediction);
 my (%true,%predicted,%actual);
-foreach (values %mfeatures)
+
+my %classes;
+my @fichiers=glob("$dossierInformations/*");
+foreach my $fichier (@fichiers)
 {
-	$true{$_}=0;
-	$predicted{$_}=0;
-	$actual{$_}=0;
+	open(my $ffichier,"<",$fichier);
+	open(my $ffichier2,"<",$dossierInformationsSansTests."/".(basename($fichier)));
+	my $ligne;
+	my $ligne2;
+	while(($ligne=<$ffichier>) && ($ligne2=<$ffichier2>))
+	{
+		$ligne =~ s/\s+$//;
+		my ($x,$y,$w,$h,$fichierDecoupe,$personne,$valide,$ignore)=split("\t",$ligne);
+		$ligne2  =~ s/\s+$//;
+		my ($x2,$y2,$w2,$h2,$fichierDecoupe2,$personne2,$valide2,$ignore2)=split("\t",$ligne2);
+		if(($fichierDecoupe eq $fichierDecoupe2) && (exists $ensembleAEvaluer{$fichierDecoupe}))
+		{
+			if(!exists($predicted{$personne})) {$predicted{$personne}=0;}
+			$predicted{$personne}++;
+			if(!exists($actual{$personne2})) {$actual{$personne2}=0;}
+			$actual{$personne2}++;
+			if($personne eq $personne2) {if(!exists($true{$personne})) {$true{$personne}=0;} $true{$personne}++;}
+			$classes{$personne}=1;
+			$classes{$personne2}=1;
+		}
+	}
+	close($ffichier);
 }
-while(($ligneListe=<$fliste>) && ($lignePrediction=<$fprediction>))
+
+my @classes=keys %classes;
+
+foreach my $classe (@classes)
 {
-	$ligneListe=~ s/\s+$//;
-	$lignePrediction=~ s/\s+$//;
-	my @liste=split("\t",$ligneListe);
-	$predicted{$mfeatures{$lignePrediction}}++;
-	$actual{$liste[0]}++;
-	if($mfeatures{$lignePrediction} eq $liste[0]) { $true{$liste[0]}++; }
+	if(!exists($predicted{$classe})) {$predicted{$classe}=0;}
+	if(!exists($actual{$classe})) {$actual{$classe}=0;}
+	if(!exists($true{$classe})) {$true{$classe}=0;}
 }
-close($fliste);
-close($fprediction);
+
 
 sub round
 {
@@ -43,7 +69,7 @@ sub round
 my $arrondi=2;
 
 my (%recall,%precision,%fmesure);
-foreach (values %mfeatures)
+foreach (@classes)
 {
 	$recall{$_}=$actual{$_}==0 ? 1 : $true{$_}/$actual{$_};
 	$precision{$_}=$predicted{$_}==0 ? 1 : $true{$_}/$predicted{$_};

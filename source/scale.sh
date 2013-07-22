@@ -1,3 +1,9 @@
-svm-scale -s ../intermediaire/scaling_parameters ../intermediaire/entrainement.svm > ../intermediaire/entrainementScaled.svm
-svm-scale -r ../intermediaire/scaling_parameters ../intermediaire/test.svm > ../intermediaire/testScaled.svm
-svm-scale -r ../intermediaire/scaling_parameters ../intermediaire/crossValidation.svm > ../intermediaire/crossValidationScaled.svm
+if [[ $# -ne 1 ]]
+then
+		echo "usage : $0 <dossierIntermediaire>" 
+		exit 1
+fi
+dossierIntermediaire=$1
+
+svm-scale -s $dossierIntermediaire/scaling_parameters $dossierIntermediaire/entrainement.svm > $dossierIntermediaire/entrainementScaled.svm
+svm-scale -r $dossierIntermediaire/scaling_parameters $dossierIntermediaire/test.svm > $dossierIntermediaire/testScaled.svm

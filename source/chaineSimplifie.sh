@@ -14,11 +14,11 @@ adir=`pwd`
 cd $dir
 make
 cd $adir
-$dir/newtosvm.sh $dossierInformations $dossierPhotosDecoupees $dossierModele $dossierIntermediaire
+$dir/tosvm.sh $dossierInformations $dossierPhotosDecoupees $dossierModele $dossierIntermediaire
 echo scale...
-$dir/newscale.sh $dossierIntermediaire
+$dir/scale.sh $dossierIntermediaire
 echo svm...
-$dir/newsvm.sh $dossierModele $dossierIntermediaire
+$dir/svm.sh $dossierModele $dossierIntermediaire
 echo proposition...
-$dir/newproposition.sh $dossierInformations $dossierModele $dossierIntermediaire
+$dir/proposition.sh $dossierInformations $dossierModele $dossierIntermediaire
 

@@ -10,10 +10,10 @@ dossierModele=$3
 dossierIntermediaire=$4
 
 echo separer...
-$dir/newseparer.sh $dossierInformations $dossierIntermediaire
+$dir/separer.sh $dossierInformations $dossierIntermediaire
 
 echo chaine sur sans tests...
 $dir/chaineSimplifie.sh $dossierIntermediaire/informationsSansTests/ $dossierPhotosDecoupees $dossierModele $dossierIntermediaire
 
 echo evaluation...
-$dir/newevaluation.sh $dossierInformations $dossierIntermediaire
+$dir/evaluation.sh $dossierInformations $dossierIntermediaire

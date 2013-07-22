@@ -1,5 +1,15 @@
+if [[ $# -ne 2 ]]
+then
+		echo "usage : $0 <dossierInformations> <dossierIntermediaire>" 
+		exit 1
+fi
+dir=`dirname $0`
+dossierInformations=$1
+dossierIntermediaire=$2
+
+
 echo Test:
-perl evaluation.pl ../sortie/prediction.svm ../intermediaire/corpusTest/liste.txt ../modele/entrainement.feat
+perl $dir/evaluation.pl $dossierInformations $dossierIntermediaire/informationsSansTests/ $dossierIntermediaire/fichierTest.txt
 echo ""
 echo Cross Validation:
-perl evaluation.pl ../sortie/predictionCV.svm ../intermediaire/corpusCrossValidation/liste.txt ../modele/entrainement.feat
+perl $dir/evaluation.pl $dossierInformations $dossierIntermediaire/informationsSansTests/ $dossierIntermediaire/fichierCrossValidation.txt
