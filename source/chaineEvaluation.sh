@@ -9,6 +9,9 @@ dossierPhotosDecoupees=$2
 dossierModele=$3
 dossierIntermediaire=$4
 
+mkdir -p $dossierModele
+mkdir -p $dossierIntermediaire
+
 echo separer...
 $dir/separer.sh $dossierInformations $dossierIntermediaire
 

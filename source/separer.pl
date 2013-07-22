@@ -9,7 +9,8 @@ if((scalar @ARGV)!=4)
 }
 my ($informationsInitial,$informationsSansTests,$fichierTest,$fichierCrossValidation)=@ARGV;
 
-
+my $proportionTest=15/100;
+my $proportionCrossValidation=15/100;
 
 
 # ce que ça doit faire : lire chaque fichier d'info d'un dossier info initial
@@ -64,11 +65,11 @@ foreach my $fichier (@fichiers)
 
 # print($count."\n");# 151
 
-my $nbSet=int($count*15/100);
+my $nbSet=int($count*$proportionTest);
 my %testSet;
 while((scalar(keys %testSet)) != $nbSet) {$testSet{int(rand($count))}=1;}
 
-my $nbCrossValidation=int($count*15/100);
+my $nbCrossValidation=int($count*$proportionCrossValidation);
 my %crossValidationSet;
 while((scalar(keys %crossValidationSet)) != $nbCrossValidation) {my $r=int(rand($count)); if(!(exists $testSet{$r})) {$crossValidationSet{$r}=1;}}
 
