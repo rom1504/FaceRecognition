@@ -11,7 +11,8 @@ use strict;
 
 if((scalar @ARGV)!=3)
 {
-	print("usage: $0 <dossierInformations> <dossierInformationsSansTests> <fichierEnsembleAEvaluer>");
+	print("usage: $0 <dossierInformations> <dossierInformationsSansTests> <fichierEnsembleAEvaluer>\n");
+	exit 1;
 }
 my ($dossierInformations,$dossierInformationsSansTests,$fichierEnsembleAEvaluer)=@ARGV;
 

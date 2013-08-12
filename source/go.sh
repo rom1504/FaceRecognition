@@ -1,2 +1,2 @@
 dir=`dirname $0`
-$dir/chaineSimplifie.sh donnees/informations donnees/PhotosDecoupees modele intermediaire
+bash $dir/chaineSimplifie.sh $dir/../donnees/informations $dir/../donnees/PhotosDecoupees $dir/../modele $dir/../intermediaire

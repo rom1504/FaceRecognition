@@ -13,10 +13,10 @@ mkdir -p $dossierModele
 mkdir -p $dossierIntermediaire
 
 echo separer...
-$dir/separer.sh $dossierInformations $dossierIntermediaire
+bash $dir/separer.sh $dossierInformations $dossierIntermediaire
 
 echo chaine sur sans tests...
-$dir/chaineSimplifie.sh $dossierIntermediaire/informationsSansTests/ $dossierPhotosDecoupees $dossierModele $dossierIntermediaire
+bash $dir/chaineSimplifie.sh $dossierIntermediaire/informationsSansTests/ $dossierPhotosDecoupees $dossierModele $dossierIntermediaire
 
 echo evaluation...
-$dir/evaluation.sh $dossierInformations $dossierIntermediaire
+bash $dir/evaluation.sh $dossierInformations $dossierIntermediaire
