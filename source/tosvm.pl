@@ -20,7 +20,8 @@ if($type eq "test")
 
 	
 open(my $fsvm,">",$svm);
-my @fichiers=glob("$informations/*");
+my @fichiers=split("\n",`find -L $informations -type f`);
+
 foreach my $fichier (@fichiers)
 {
 	open(my $ffichier,"<",$fichier);

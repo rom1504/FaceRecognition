@@ -15,7 +15,7 @@ close($ffeatures);
 
 
 open(my $fprediction,"<",$prediction);
-my @fichiers=glob("$informations/*");
+my @fichiers=split("\n",`find -L $informations -type f`);
 foreach my $fichier (@fichiers)
 {
 	open(my $ffichier,"<",$fichier);

@@ -1,6 +1,7 @@
 use File::Basename;
 use File::Copy;
 use File::Remove 'remove';
+use File::Path qw(make_path);
 use strict;
 if((scalar @ARGV)!=4)
 {
@@ -45,7 +46,8 @@ my $proportionCrossValidation=15/100;
 my %identifications;
 
 my $count=0;
-my @fichiers=glob("$informationsInitial/*");
+my @fichiers=split("\n",`find -L $informationsInitial -type f`);
+
 foreach my $fichier (@fichiers)
 {
 	$identifications{$fichier}=[];
@@ -81,7 +83,10 @@ open(my $ffichierCrossValidation,">",$fichierCrossValidation);
 my $i=0;
 foreach my $fichier (keys %identifications)
 {
-	open(my $ffichier,">",$informationsSansTests."/".(basename $fichier));
+	my $pfichier=$fichier;
+	$pfichier=~s/^$informationsInitial\///;
+	make_path(dirname($informationsSansTests."/".$pfichier));
+	open(my $ffichier,">",$informationsSansTests."/".$pfichier);
 	foreach my $identification (@{$identifications{$fichier}})
 	{
 		my ($x,$y,$w,$h,$fichierDecoupe,$personne,$valide,$ignore)=split("\t",$identification);

@@ -24,11 +24,13 @@ close($ffichierEnsembleAEvaluer);
 my (%true,%predicted,%actual);
 
 my %classes;
-my @fichiers=glob("$dossierInformations/*");
+my @fichiers=split("\n",`find -L $dossierInformations -type f | sed 's,^'$dossierInformations'/,,'`);
 foreach my $fichier (@fichiers)
 {
+	my $bfichier=$fichier;
+	$fichier=$dossierInformations."/".$fichier;
 	open(my $ffichier,"<",$fichier);
-	open(my $ffichier2,"<",$dossierInformationsSansTests."/".(basename($fichier)));
+	open(my $ffichier2,"<",$dossierInformationsSansTests."/".$bfichier);
 	my $ligne;
 	my $ligne2;
 	while(($ligne=<$ffichier>) && ($ligne2=<$ffichier2>))
