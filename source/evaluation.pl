@@ -41,13 +41,19 @@ foreach my $fichier (@fichiers)
 		my ($x2,$y2,$w2,$h2,$fichierDecoupe2,$personne2,$valide2,$ignore2)=split("\t",$ligne2);
 		if(($fichierDecoupe eq $fichierDecoupe2) && (exists $ensembleAEvaluer{$fichierDecoupe}))
 		{
-			if(!exists($predicted{$personne})) {$predicted{$personne}=0;}
-			$predicted{$personne}++;
-			if(!exists($actual{$personne2})) {$actual{$personne2}=0;}
-			$actual{$personne2}++;
+			if($personne2 ne "")
+			{
+				if(!exists($predicted{$personne2})) {$predicted{$personne2}=0;}
+				$predicted{$personne2}++;
+			}
+			if(!exists($actual{$personne})) {$actual{$personne}=0;}
+			$actual{$personne}++;
 			if($personne eq $personne2) {if(!exists($true{$personne})) {$true{$personne}=0;} $true{$personne}++;}
+			if($personne2 ne "")
+			{
+				$classes{$personne2}=1;
+			}
 			$classes{$personne}=1;
-			$classes{$personne2}=1;
 		}
 	}
 	close($ffichier);
@@ -76,8 +82,8 @@ foreach (@classes)
 {
 	$recall{$_}=$actual{$_}==0 ? 1 : $true{$_}/$actual{$_};
 	$precision{$_}=$predicted{$_}==0 ? 1 : $true{$_}/$predicted{$_};
-	$fmesure{$_}=$recall{$_}+$precision{$_}==0 ? 1 : 2*$recall{$_}*$precision{$_}/($recall{$_}+$precision{$_});
-	print("$_ : Recall=".round($recall{$_},$arrondi)." Precision=".round($precision{$_},$arrondi)." Fmesure=".round($fmesure{$_},$arrondi)."\n");
+	$fmesure{$_}=$recall{$_}+$precision{$_}==0 ? 0 : 2*$recall{$_}*$precision{$_}/($recall{$_}+$precision{$_});
+	print("$_ : Actual=".round($actual{$_},$arrondi)." Predicted=".round($predicted{$_},$arrondi)." True=".round($true{$_},$arrondi)." Recall=".round($recall{$_},$arrondi)." Precision=".round($precision{$_},$arrondi)." Fmesure=".round($fmesure{$_},$arrondi)."\n");
 }
 
 sub mean

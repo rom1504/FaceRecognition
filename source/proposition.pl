@@ -3,11 +3,11 @@ use File::Basename;
 use File::Copy;
 use File::Remove 'remove';
 
-if((scalar @ARGV)!=3)
+if((scalar @ARGV)!=4)
 {
-	print("usage: $0 <prediction> <features> <dossierInformations>");
+	print("usage: $0 <prediction> <features> <dossierInformations> <seuil>");
 }
-my ($prediction,$features,$informations)=@ARGV;
+my ($prediction,$features,$informations,$seuil)=@ARGV;
 
 open(my $ffeatures,"<",$features);
 my %mfeatures=map {$_ =~ s/\s+$//; my @a=split("\t",$_);$a[1]=>$a[0]} (<$ffeatures>);
@@ -15,6 +15,7 @@ close($ffeatures);
 
 
 open(my $fprediction,"<",$prediction);
+<$fprediction>;
 my @fichiers=split("\n",`find -L $informations -type f`);
 foreach my $fichier (@fichiers)
 {
@@ -32,10 +33,15 @@ foreach my $fichier (@fichiers)
 		&& $personne eq "" && $ignore ne "1")
 		{
 			my $lignePrediction=<$fprediction>;
-			$lignePrediction=~ s/\s+$//;		
-			$personne=$mfeatures{$lignePrediction};
-			$valide="0";
-			$ignore="0";
+			$lignePrediction=~ s/\s+$//;
+			my @tabPrediction=split(" ",$lignePrediction);
+			if($seuil==-1 || $tabPrediction[int($tabPrediction[0])]>$seuil)
+			{
+				$personne=$mfeatures{int($tabPrediction[0])};
+				$valide="0";
+				$ignore="0";
+			}
+			
 			$lignes[$i]=$x."\t".$y."\t".$w."\t".$h."\t".$fichierDecoupe."\t".$personne."\t".$valide."\t".$ignore;
 			$j++;
 		}

@@ -1,6 +1,6 @@
-if [[ $# -ne 4 ]]
+if [[ $# -ne 5 ]]
 then
-		echo "usage : $0 <dossierInformations> <dossierPhotosDecoupees> <dossierModele> <dossierIntermediaire>" 
+		echo "usage : $0 <dossierInformations> <dossierPhotosDecoupees> <dossierModele> <dossierIntermediaire> <seuil>" 
 		exit 1
 fi
 dir=`dirname $0`
@@ -8,6 +8,7 @@ dossierInformations=$1
 dossierPhotosDecoupees=$2
 dossierModele=$3
 dossierIntermediaire=$4
+seuil=$5
 
 mkdir -p $dossierModele
 mkdir -p $dossierIntermediaire
@@ -23,4 +24,4 @@ bash $dir/scale.sh $dossierIntermediaire
 echo svm...
 bash $dir/svm.sh $dossierModele $dossierIntermediaire
 echo proposition...
-bash $dir/proposition.sh $dossierInformations $dossierModele $dossierIntermediaire
+bash $dir/proposition.sh $dossierInformations $dossierModele $dossierIntermediaire $seuil

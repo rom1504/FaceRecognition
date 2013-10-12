@@ -3,15 +3,12 @@ use File::Copy;
 use File::Remove 'remove';
 use File::Path qw(make_path);
 use strict;
-if((scalar @ARGV)!=4)
+if((scalar @ARGV)!=6)
 {
-	print("usage: $0 <informationsInitial> <informationsSansTests> <fichierTest> <fichierCrossValidation>\n");
+	print("usage: $0 <informationsInitial> <informationsSansTests> <fichierTest> <fichierCrossValidation> <proportionTest> <proportionCrossValidation>\n");
 	exit 1;
 }
-my ($informationsInitial,$informationsSansTests,$fichierTest,$fichierCrossValidation)=@ARGV;
-
-my $proportionTest=15/100;
-my $proportionCrossValidation=15/100;
+my ($informationsInitial,$informationsSansTests,$fichierTest,$fichierCrossValidation,$proportionTest,$proportionCrossValidation)=@ARGV;
 
 
 # ce que ça doit faire : lire chaque fichier d'info d'un dossier info initial

@@ -24,6 +24,7 @@ my @fichiers=split("\n",`find -L $informations -type f`);
 
 foreach my $fichier (@fichiers)
 {
+# 	print($fichier."\n");
 	open(my $ffichier,"<",$fichier);
 	my $ligne;
 	while($ligne=<$ffichier>)
@@ -39,7 +40,7 @@ foreach my $fichier (@fichiers)
 				$features{$personne}=$max;
 			}
 			open(my $r,dirname($0)."/../bin/tosvm $fichierDecoupe |");
-			my $feature=$type eq "entrainement"  ? $features{$personne} : "0";# no idea whether I should put 0 or nothing or...
+			my $feature=$type eq "entrainement"  ? $features{$personne} : "0";# no idea whether I should put 0 or nothing or... : 0 : man svm-predict
 			print($fsvm $feature." ".(<$r>));
 			close($r);
 		}
