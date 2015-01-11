@@ -1,5 +1,5 @@
 use File::Basename;
-     use List::Util qw(reduce max);
+use List::Util qw(reduce max);
 if((scalar @ARGV)!=5)
 {
 	print("usage: $0 <dossierInformations> <dossierPhotosDecoupees> <fichierFeatures> <fichierSVM> <entrainement ou test>\n");
